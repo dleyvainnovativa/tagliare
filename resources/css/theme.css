@@ -1,0 +1,521 @@
+/* ============================================================
+   theme.css — Audio Playlist Platform
+   "Linear meets Stripe": calm, trustworthy, light.
+   Tokens first; component styles below.
+   ============================================================ */
+
+:root {
+  /* Brand — deep forest green primary */
+  --brand: #20361c;
+  --brand-600: #2c4827;
+  --brand-700: #182812;
+  --brand-tint: #e8efe6;
+
+  /* Accent — gold/amber (active states, progress, highlights) */
+  --accent: #d39909;
+  --accent-600: #b88308;
+  --accent-tint: #fbf2da;
+
+  /* Surfaces */
+  --bg: #f7f8f5;
+  --surface: #ffffff;
+  --surface-2: #f0f2ec;
+  --border: #e4e7df;
+  --border-strong: #cdd2c5;
+
+  /* Text */
+  --text: #1c241a;
+  --text-muted: #5b6356;
+  --text-soft: #8a917f;
+
+  /* Feedback */
+  --success: #16a34a;
+  --danger: #dc2626;
+  --warning: #d97706;
+
+  /* Shape & depth */
+  --radius: 8px;
+  --radius-lg: 14px;
+  --radius-pill: 999px;
+  --shadow-sm: 0 1px 2px rgba(16, 24, 40, 0.05);
+  --shadow: 0 4px 14px rgba(16, 24, 40, 0.08);
+  --shadow-lg: 0 12px 40px rgba(16, 24, 40, 0.14);
+
+  /* Type */
+  --font-ui: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  font-family: var(--font-ui);
+  background: var(--bg);
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+  letter-spacing: -0.01em;
+}
+
+/* --- Typography helpers --- */
+.font-mono { font-family: var(--font-mono); }
+.text-muted-2 { color: var(--text-muted); }
+.text-soft { color: var(--text-soft); }
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: .72rem;
+  text-transform: uppercase;
+  letter-spacing: .12em;
+  color: var(--accent-600);
+  font-weight: 600;
+}
+
+/* --- Cards / panels --- */
+.panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+}
+.panel-pad { padding: 1.5rem; }
+
+/* --- Buttons --- */
+.btn-brand {
+  background: var(--brand);
+  border-color: var(--brand);
+  color: #fff;
+  font-weight: 600;
+  border-radius: var(--radius);
+  transition: background .15s ease, transform .05s ease;
+}
+.btn-brand:hover { background: var(--brand-600); border-color: var(--brand-600); color: #fff; }
+.btn-brand:active { transform: translateY(1px); }
+.btn-brand:focus-visible { outline: 3px solid var(--brand-tint); outline-offset: 2px; }
+
+.btn-ghost {
+  background: transparent;
+  border: 1px solid var(--border-strong);
+  color: var(--text);
+  border-radius: var(--radius);
+  font-weight: 500;
+}
+.btn-ghost:hover { background: var(--surface-2); color: var(--text); }
+
+/* --- Forms --- */
+.form-control, .form-select {
+  border-radius: var(--radius);
+  border-color: var(--border-strong);
+  color: var(--text);
+}
+.form-control:focus, .form-select:focus {
+  border-color: var(--brand);
+  box-shadow: 0 0 0 3px var(--brand-tint);
+}
+
+/* --- Dropzone --- */
+.dropzone {
+  border: 2px dashed var(--border-strong);
+  border-radius: var(--radius-lg);
+  background: var(--surface-2);
+  padding: 2.5rem 1.5rem;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color .15s ease, background .15s ease;
+}
+.dropzone:hover, .dropzone.dragover {
+  border-color: var(--brand);
+  background: var(--brand-tint);
+}
+
+/* --- Track rows (upload editor) --- */
+.track-row {
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+  padding: .65rem .85rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  margin-bottom: .5rem;
+}
+.track-handle { cursor: grab; color: var(--text-soft); }
+.track-row.dragging { opacity: .5; }
+
+/* --- Toasts --- */
+.toast-stack {
+  position: fixed; top: 1rem; right: 1rem; z-index: 1080;
+  display: flex; flex-direction: column; gap: .5rem;
+}
+.toast-item {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--brand);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: .75rem 1rem;
+  min-width: 240px;
+  animation: toast-in .2s ease;
+}
+.toast-item.is-success { border-left-color: var(--success); }
+.toast-item.is-error { border-left-color: var(--danger); }
+@keyframes toast-in { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: none; } }
+
+/* --- Loading --- */
+.is-loading { position: relative; pointer-events: none; opacity: .65; }
+.spinner-inline {
+  width: 1rem; height: 1rem; border: 2px solid var(--brand-tint);
+  border-top-color: var(--brand); border-radius: 50%;
+  display: inline-block; animation: spin .6s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
+}
+
+/* ============================================================
+   PLAYER (Tier 4) — signature surface
+   Gold seek bar is the one bright element; rest stays calm.
+   ============================================================ */
+
+.player-stage {
+  min-height: 100dvh;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 2rem 1rem;
+  background:
+    radial-gradient(120% 80% at 50% -10%, var(--brand-tint) 0%, transparent 55%),
+    var(--bg);
+}
+
+.player {
+  width: 100%;
+  max-width: 420px;
+  margin: auto;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  overflow: hidden;
+}
+
+/* --- Cover --- */
+.player-cover {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  max-height: 420px;
+  background: var(--surface-2);
+  overflow: hidden;
+  border-radius: 20px;
+}
+.player-cover img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;   /* crop to fill — image size never affects layout */
+  display: block;
+}
+.player-cover-fallback {
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--brand);
+  color: rgba(255,255,255,.85);
+  font-size: 3.5rem;
+}
+
+/* --- Now-playing equalizer (signature micro-motion) --- */
+.eq {
+  position: absolute; bottom: .85rem; right: .85rem;
+  display: none; align-items: flex-end; gap: 3px;
+  height: 22px; padding: 6px 8px;
+  background: rgba(28,36,26,.55);
+  border-radius: var(--radius-pill);
+  backdrop-filter: blur(6px);
+}
+.player.is-playing .eq { display: flex; }
+.eq span {
+  width: 3px; background: var(--accent);
+  border-radius: 2px; height: 6px;
+  animation: eq 0.9s ease-in-out infinite;
+}
+.eq span:nth-child(2) { animation-delay: .15s; }
+.eq span:nth-child(3) { animation-delay: .3s; }
+.eq span:nth-child(4) { animation-delay: .45s; }
+@keyframes eq {
+  0%, 100% { height: 5px; }
+  50%      { height: 18px; }
+}
+
+/* --- Meta --- */
+.player-body { padding: 1.25rem 1.35rem 1.5rem; }
+.player-track-title {
+   width: 240px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  font-weight: 600; font-size: 1.1rem;
+  margin: 0; line-height: 1.3;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+/* Let the title/eyebrow column shrink instead of pushing the card wider */
+.player-body > .d-flex > .overflow-hidden { min-width: 0; flex: 1 1 auto; }
+.player-track-title, .player-body .eyebrow {
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 100%;
+}
+.player-counter {
+  font-family: var(--font-mono);
+  font-size: .72rem; color: var(--text-soft);
+  letter-spacing: .04em;
+}
+
+/* --- Seek bar (THE signature) --- */
+.seek-wrap { margin: 1.1rem 0 .35rem; position: relative; padding: 8px 0; }
+.seek-track {
+  position: relative; height: 7px;
+  background: var(--surface-2);
+  border-radius: var(--radius-pill);
+  overflow: hidden;
+}
+.seek-fill {
+  position: absolute; top: 0; left: 0; height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, var(--accent) 0%, #e9b53d 100%);
+  border-radius: var(--radius-pill);
+  transition: width .1s linear;
+}
+/* While dragging, drop the transition so the fill tracks the finger 1:1 */
+.seek-wrap.is-seeking .seek-fill { transition: none; }
+
+/* Visible thumb that sits on the fill edge */
+.seek-thumb {
+  position: absolute; top: 50%; left: 0;
+  width: 16px; height: 16px;
+  background: var(--accent); border: 2px solid #fff;
+  border-radius: 50%;
+  box-shadow: 0 1px 4px rgba(0,0,0,.25);
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  transition: left .1s linear;
+}
+.seek-wrap.is-seeking .seek-thumb { transition: none; transform: translate(-50%, -50%) scale(1.25); }
+
+/* Big invisible hit area so the finger has room to drag */
+.seek-input {
+  position: absolute; left: 0; top: 0;
+  width: 100%; height: 100%;
+  margin: 0; opacity: 0; cursor: pointer;
+  touch-action: none;   /* let horizontal drag scrub instead of scrolling the page */
+}
+.seek-input:focus-visible ~ .seek-track {
+  outline: 3px solid var(--accent-tint); outline-offset: 2px;
+}
+.seek-times {
+  display: flex; justify-content: space-between;
+  font-family: var(--font-mono); font-size: .7rem;
+  color: var(--text-soft);
+}
+
+/* --- Transport controls --- */
+.player-controls {
+  display: flex; align-items: center; justify-content: center;
+  gap: 1.75rem; margin-top: 1rem;
+}
+.ctrl {
+  border: none; background: none; cursor: pointer;
+  color: var(--text-muted); font-size: 1.35rem;
+  display: grid; place-items: center;
+  transition: color .15s ease, transform .05s ease;
+}
+.ctrl:hover { color: var(--text); }
+.ctrl:active { transform: scale(.92); }
+.ctrl:focus-visible { outline: 3px solid var(--brand-tint); outline-offset: 3px; border-radius: 50%; }
+.ctrl-play {
+  width: 58px; height: 58px; border-radius: 50%;
+  background: var(--brand); color: #fff; font-size: 1.4rem;
+  box-shadow: 0 6px 18px rgba(32,54,28,.32);
+}
+.ctrl-play:hover { background: var(--brand-600); color: #fff; }
+
+/* --- Track list --- */
+.player-list { border-top: 1px solid var(--border); }
+.player-list-head {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: .9rem 1.35rem .5rem;
+}
+.player-list-head .eyebrow { margin: 0; }
+.player-row {
+  display: flex; align-items: center; gap: .75rem;
+  padding: .6rem 1.35rem;
+  cursor: pointer; border: none; background: none; width: 100%;
+  text-align: left; position: relative;
+  transition: background .12s ease;
+}
+.player-row::before {
+  content: ''; position: absolute; left: 0; top: 0; bottom: 0;
+  width: 3px; background: transparent;
+}
+.player-row:hover { background: var(--surface-2); }
+.player-row.is-active { background: var(--accent-tint); }
+.player-row.is-active::before { background: var(--accent); }
+.player-row-num {
+  font-family: var(--font-mono); font-size: .75rem;
+  color: var(--text-soft); width: 1.5rem; flex-shrink: 0;
+}
+.player-row.is-active .player-row-num { color: var(--accent-600); }
+.player-row-name {
+      width: 1px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  flex: 1 1 auto; min-width: 0;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  font-size: .92rem; color: var(--text);
+}
+.player-row.is-active .player-row-name { font-weight: 600; }
+.player-row-dur {
+  font-family: var(--font-mono); font-size: .72rem; color: var(--text-soft);
+  flex-shrink: 0;
+}
+.player-footer {
+  text-align: center; padding: 1rem; font-size: .72rem; color: var(--text-soft);
+}
+
+/* ============================================================
+   DASHBOARD — responsive table that collapses to cards
+   ============================================================ */
+
+.dash-head {
+  align-items: center;
+  gap: 1rem;
+  padding: .75rem 1.25rem;
+  border-bottom: 1px solid var(--border);
+  font-family: var(--font-mono);
+  font-size: .72rem;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  color: var(--text-soft);
+}
+
+.dash-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: .85rem 1.25rem;
+  border-bottom: 1px solid var(--border);
+}
+.dash-row:last-of-type { border-bottom: 0; }
+
+.dash-main {
+  display: flex;
+  align-items: center;
+  gap: .85rem;
+  flex-grow: 1;
+  min-width: 0;
+}
+.dash-cover {
+  width: 44px; height: 44px; flex-shrink: 0;
+  border-radius: var(--radius);
+  background: var(--surface-2);
+  display: grid; place-items: center;
+  color: var(--text-soft);
+  overflow: hidden;
+}
+.dash-cover img { width: 100%; height: 100%; object-fit: cover; }
+.dash-title { font-weight: 600; font-size: .95rem; }
+.dash-link {
+  font-size: .75rem;
+  color: var(--text-soft);
+  text-decoration: none;
+  max-width: 260px;
+}
+.dash-link:hover { color: var(--brand); text-decoration: underline; }
+
+.dash-meta { font-size: .85rem; color: var(--text-muted); }
+
+.dash-actions {
+  display: flex;
+  gap: .35rem;
+  width: 160px;
+  justify-content: flex-end;
+  flex-shrink: 0;
+}
+.dash-actions .btn { padding: .35rem .55rem; }
+
+/* Mobile: stack into cards */
+@media (max-width: 767.98px) {
+  .dash-row {
+    flex-wrap: wrap;
+    gap: .5rem .75rem;
+    padding: 1rem 1.15rem;
+  }
+  .dash-main { flex-basis: 100%; }
+  .dash-meta { width: auto !important; }
+  .dash-actions {
+    width: 100%;
+    justify-content: flex-start;
+    margin-top: .35rem;
+    padding-top: .65rem;
+    border-top: 1px solid var(--border);
+  }
+  .dash-link { max-width: 75vw; }
+}
+
+/* ============================================================
+   COVER FALLBACK — logo on light bg, edge-to-edge
+   .is-logo marks a cover that's showing the default logo PNG
+   (transparent), so it sits on white and fills the square.
+   ============================================================ */
+
+/* Player cover */
+.player-cover.is-logo { background: #ffffff; }
+.player-cover.is-logo img { object-fit: cover; }
+
+/* Dashboard thumbnail */
+.dash-cover.is-logo { background: #ffffff; }
+.dash-cover.is-logo img { object-fit: cover; }
+
+/* Editor cover thumb */
+.cover-thumb {
+  width: 72px; height: 72px; flex-shrink: 0;
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+}
+.cover-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.cover-thumb.is-logo { background: #ffffff; }
+
+/* ============================================================
+   TOPBAR — fixed-top, logo only (no interaction)
+   Logo source is 254x135; constrained by height, width auto.
+   ============================================================ */
+
+:root { --topbar-h: 56px; }
+
+.topbar {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: var(--topbar-h);
+  display: flex;
+  align-items: center;
+  padding: 0 1.25rem;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  box-shadow: var(--shadow-sm);
+  z-index: 1030;
+}
+.topbar-logo {
+  height: 32px;        /* 254x135 -> ~60px wide */
+  width: auto;
+  display: block;
+}
+
+/* Push normal page content below the fixed bar */
+/* body { padding-top: var(--topbar-h); } */
+
+/* Player is a full-height stage — keep it centered in the space
+   left under the bar (padding-top already shifts it down, so trim
+   its min-height by the bar height to avoid a scroll). */
+.player-stage {
+  min-height: calc(100dvh - var(--topbar-h));
+}
